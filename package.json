@@ -24,8 +24,7 @@
         "release": "n8n-node release",
         "publish:patch": "npm version patch --no-git-tag-version && npm run build && npm run lint && npm publish --access public --ignore-scripts",
         "publish:minor": "npm version minor --no-git-tag-version && npm run build && npm run lint && npm publish --access public --ignore-scripts",
-        "publish:major": "npm version major --no-git-tag-version && npm run build && npm run lint && npm publish --access public --ignore-scripts",
-        "prepublishOnly": "n8n-node prerelease"
+        "publish:major": "npm version major --no-git-tag-version && npm run build && npm run lint && npm publish --access public --ignore-scripts"
     },
     "files": [
         "dist"
