@@ -1,0 +1,9 @@
+{
+	"servers": {
+		"trustmarkt-api-server": {
+			"url": "https://trustmarkt.readme.io/mcp",
+			"type": "http"
+		}
+	},
+	"inputs": []
+}
