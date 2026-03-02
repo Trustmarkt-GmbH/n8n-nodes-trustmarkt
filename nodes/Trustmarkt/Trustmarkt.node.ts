@@ -29,6 +29,7 @@
  */
 
 import {
+    NodeConnectionTypes,
     type INodeType,
     type INodeTypeDescription,
 } from 'n8n-workflow';
@@ -98,8 +99,8 @@ export class Trustmarkt implements INodeType {
         // ══════════════════════════════════════════════════════════════
         // CONNECTIONS
         // ══════════════════════════════════════════════════════════════
-        inputs: ['main'],
-        outputs: ['main'],
+        inputs: [NodeConnectionTypes.Main],
+        outputs: [NodeConnectionTypes.Main],
         usableAsTool: true,
 
         // ══════════════════════════════════════════════════════════════

@@ -5,6 +5,16 @@
     "categories": [
         "Marketing & Growth"
     ],
+    "subcategories": {
+        "Marketing & Growth": [
+            "Reviews"
+        ]
+    },
+    "alias": [
+        "Trustmarkt",
+        "Review",
+        "Webhook"
+    ],
     "resources": {
         "credentialDocumentation": [
             {
@@ -13,7 +23,7 @@
         ],
         "primaryDocumentation": [
             {
-                "url": "https://www.trustmarkt.de/r/api"
+                "url": "https://github.com/Trustmarkt-GmbH/n8n-nodes-trustmarkt#readme"
             }
         ]
     }

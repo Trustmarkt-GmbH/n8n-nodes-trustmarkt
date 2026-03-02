@@ -5,6 +5,16 @@
 	"categories": [
 		"Marketing & Growth"
 	],
+	"subcategories": {
+		"Marketing & Growth": [
+			"Reviews"
+		]
+	},
+	"alias": [
+		"Trustmarkt",
+		"Review",
+		"Trust"
+	],
 	"resources": {
 		"credentialDocumentation": [
 			{
