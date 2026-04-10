@@ -2,6 +2,19 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.1.5] - 2026-04-10
+
+### Fixed
+- **[HIGH]** Webhook `create()` method now throws `NodeApiError` instead of silently returning `false` on failure
+- **[HIGH]** Webhook `delete()` method now cleans up static data (`webhookId`, `webhookSecret`) in a `finally` block so stale data never prevents re-registration
+- **[MEDIUM]** `getWebhookEvents()` load options now throws `NodeApiError` instead of returning an empty array on failure
+- **[MEDIUM]** Removed unsupported `subcategories` field from both node codex files
+
+### Removed
+- Unused re-export file `resources/review/review.operations.ts`
+- Unused shared field descriptions file `shared/descriptions.ts`
+- Unused `trustmarktApiRequest()` and `trustmarktApiRequestAllItems()` exports from `shared/transport.ts`
+
 ## [0.1.2] - 2025-12-01
 
 ### Added

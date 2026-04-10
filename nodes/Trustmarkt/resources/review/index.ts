@@ -8,7 +8,6 @@
  * ─────────────────────────────────────────────────────────────────
  *   resources/review/
  *         ├── index.ts          ← This file (exports everything)
- *         ├── review.operations.ts  ← Operation definitions
  *         └── operations/       ← Individual operation implementations
  *               ├── get.ts      ← Get single review operation
  *               └── list.ts     ← List reviews operation
@@ -17,7 +16,7 @@
  * ADDING A NEW OPERATION:
  * 1. Create a new file in operations/ (e.g., reply.ts)
  * 2. Export the operation definition and fields
- * 3. Import and add to review.operations.ts
+ * 3. Import and re-export in this index file
  * 4. Add fields to the reviewFields array below
  */
 

@@ -17,6 +17,7 @@
  */
 
 import {
+    NodeApiError,
     NodeConnectionTypes,
     type IDataObject,
     type IHookFunctions,
@@ -26,6 +27,7 @@ import {
     type INodeTypeDescription,
     type IWebhookFunctions,
     type IWebhookResponseData,
+    type JsonObject,
 } from 'n8n-workflow';
 
 import { getApiBaseUrl } from './shared/transport';
@@ -168,9 +170,8 @@ export class TrustmarktTrigger implements INodeType {
                     }
 
                     return true;
-                } catch {
-                    // Return false on error
-                    return false;
+                } catch (error) {
+                    throw new NodeApiError(this.getNode(), error as JsonObject);
                 }
             },
 
@@ -202,14 +203,14 @@ export class TrustmarktTrigger implements INodeType {
                         },
                     );
 
-                    // Clear stored data
-                    delete webhookData.webhookId;
-                    delete webhookData.webhookSecret;
-
                     return true;
                 } catch {
                     // Return true even on error (webhook might not exist anymore)
                     return true;
+                } finally {
+                    // Always clear stored data regardless of API outcome
+                    delete webhookData.webhookId;
+                    delete webhookData.webhookSecret;
                 }
             },
         },
@@ -250,10 +251,8 @@ export class TrustmarktTrigger implements INodeType {
                         value: event.value as string,
                         description: event.description as string,
                     }));
-                } catch {
-                    // If API call fails, return empty array
-                    // User will see "No options available"
-                    return [];
+                } catch (error) {
+                    throw new NodeApiError(this.getNode(), error as JsonObject);
                 }
             },
         },
