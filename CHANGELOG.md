@@ -2,6 +2,11 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.1.6] - 2026-05-19
+
+### Changed
+- User responses now include the new `email_hashed` field returned by the Trustmarkt API. Affects the outputs of `User → Get`, `User → Get Many` and `Me → Get`. The declarative node passes the field through automatically — no workflow changes required, but downstream nodes can now consume `email_hashed` (e.g. for Gravatar lookups or privacy-preserving identity matching).
+
 ## [0.1.5] - 2026-04-10
 
 ### Fixed
