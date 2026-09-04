@@ -9,16 +9,18 @@
  *   Trustmarkt.node.ts (this file)
  *         │
  *         ├── resources/           ← Resource-specific operations
- *         │     ├── review/        ← Reviews (list, get, reply, etc.)
- *         │     ├── user/          ← Users (future)
- *         │     ├── me/            ← Authenticated user (future)
- *         │     ├── caseStudy/     ← Case studies (future)
- *         │     └── inquiry/       ← Inquiries (future)
+ *         │     ├── article/         ← Articles (list, get)
+ *         │     ├── caseStudy/       ← Case studies (list, get)
+ *         │     ├── inquiry/         ← Inquiries (list, get)
+ *         │     ├── lead/            ← Leads of resources / lead magnets (list, get)
+ *         │     ├── me/              ← Authenticated user (get)
+ *         │     ├── resource/        ← Resources / lead magnets (list, get)
+ *         │     ├── review/          ← Reviews (list, get)
+ *         │     ├── reviewCollector/ ← Review collector leaderboard (list)
+ *         │     └── user/            ← Users (list, get)
  *         │
  *         └── shared/              ← Shared utilities
- *               ├── descriptions.ts  ← Reusable field definitions
- *               ├── transport.ts     ← API request helpers
- *               └── types.ts         ← TypeScript interfaces (future)
+ *               └── transport.ts     ← API request helpers
  * ─────────────────────────────────────────────────────────────────
  *
  * ADDING A NEW RESOURCE:
@@ -38,8 +40,11 @@ import {
 import { articleOperations, articleFields } from './resources/article';
 import { caseStudyOperations, caseStudyFields } from './resources/caseStudy';
 import { inquiryOperations, inquiryFields } from './resources/inquiry';
+import { leadOperations, leadFields } from './resources/lead';
 import { meOperations, meFields } from './resources/me';
+import { resourceOperations, resourceFields } from './resources/resource';
 import { reviewOperations, reviewFields } from './resources/review';
+import { reviewCollectorOperations, reviewCollectorFields } from './resources/reviewCollector';
 import { userOperations, userFields } from './resources/user';
 
 /**
@@ -63,14 +68,29 @@ const resourceOptions = [
         description: 'Manage incoming inquiries from potential customers',
     },
     {
+        name: 'Lead',
+        value: 'lead',
+        description: 'Manage leads that signed up for your resources (lead magnets)',
+    },
+    {
         name: 'Me',
         value: 'me',
         description: 'Get information about the authenticated user',
     },
     {
+        name: 'Resource',
+        value: 'resource',
+        description: 'Manage resources (lead magnets) on your profile',
+    },
+    {
         name: 'Review',
         value: 'review',
         description: 'Manage reviews on your Trustmarkt profile',
+    },
+    {
+        name: 'Review Collector',
+        value: 'reviewCollector',
+        description: 'Leaderboard of team members and the reviews they collected via personal review links',
     },
     {
         name: 'User',
@@ -90,7 +110,7 @@ export class Trustmarkt implements INodeType {
         group: ['transform'],
         version: 1,
         subtitle: '={{$parameter["operation"] + ": " + $parameter["resource"]}}',
-        description: 'Interact with the Trustmarkt API to manage reviews, users, case studies, and more',
+        description: 'Interact with the Trustmarkt API to manage reviews, leads, resources, users, case studies, and more',
 
         defaults: {
             name: 'Trustmarkt',
@@ -153,11 +173,20 @@ export class Trustmarkt implements INodeType {
             ...inquiryOperations,
             ...inquiryFields,
 
+            ...leadOperations,
+            ...leadFields,
+
             ...meOperations,
             ...meFields,
 
+            ...resourceOperations,
+            ...resourceFields,
+
             ...reviewOperations,
             ...reviewFields,
+
+            ...reviewCollectorOperations,
+            ...reviewCollectorFields,
 
             ...userOperations,
             ...userFields,

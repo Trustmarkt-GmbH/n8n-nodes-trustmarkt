@@ -27,18 +27,26 @@ Follow the [installation guide](https://docs.n8n.io/integrations/community-nodes
 - **Inquiry**
     - Get an inquiry
     - Get many inquiries
+- **Lead**
+    - Get a lead
+    - Get many leads (optionally filtered by resource)
 - **Me**
     - Get authenticated user info
+- **Resource** (lead magnet)
+    - Get a resource
+    - Get many resources
 - **Review**
     - Get a review
     - Get many reviews
+- **Review Collector**
+    - Get many review collectors (leaderboard of team members and the reviews they collected via their personal review link within a date range)
 - **User**
     - Get a user
     - Get many users
 
 ### Trustmarkt Trigger Node
 
-Starts the workflow when Trustmarkt events occur via webhooks. Events are loaded dynamically from the API.
+Starts the workflow when Trustmarkt events occur via webhooks. Events are loaded dynamically from the API, so newly added events (e.g. `lead.created`, `lead.verified`, `resource.published`) are available without updating this package.
 
 ## Credentials
 

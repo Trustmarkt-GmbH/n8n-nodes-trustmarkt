@@ -2,6 +2,17 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.2.0] - 2026-09-04
+
+### Added
+- **Resource** resource (lead magnets) with `Get` and `Get Many` operations (`GET /resources`, `GET /resources/{resource}`). Both support the `Version` option (`draft` / `public`) to control which version the content fields are taken from.
+- **Lead** resource with `Get` and `Get Many` operations (`GET /leads`, `GET /leads/{lead}`). `Get Many` can be filtered by `Resource ID`; both support expanding the `resource` the lead signed up for.
+- **Review Collector** resource with `Get Many` operation (`GET /review-collectors`): a leaderboard of team members and the reviews they collected through their personal review link within a `From` / `To` date window (defaults to the current month). Supports expanding the collector into the full `user` representation. Restricted to company owners whose plan includes personal review links.
+- `Collected By` expand option on `Review → Get` and `Review → Get Many` (`expand=collectedBy`).
+
+### Changed
+- The Trustmarkt Trigger already loads its events dynamically, so the new webhook events `lead.created`, `lead.verified`, `resource.created`, `resource.published`, `resource.unpublished` and `resource.deleted` are available in the event picker without further changes.
+
 ## [0.1.6] - 2026-05-19
 
 ### Changed

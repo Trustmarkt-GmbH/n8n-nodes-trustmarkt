@@ -150,7 +150,7 @@ n8n-nodes-trustmarkt/
 ├── credentials/
 │   └── TrustmarktApi.credentials.ts   ← API key (Bearer token) auth
 ├── nodes/Trustmarkt/
-│   ├── Trustmarkt.node.ts         ← Main declarative node (6 resources)
+│   ├── Trustmarkt.node.ts         ← Main declarative node (9 resources)
 │   ├── Trustmarkt.node.json       ← Codex metadata (categories, aliases)
 │   ├── TrustmarktTrigger.node.ts  ← Webhook trigger node
 │   ├── TrustmarktTrigger.node.json
@@ -184,7 +184,7 @@ n8n-nodes-trustmarkt/
 - **Base URL:** `https://api.trustmarkt.de/v1`
 - **Auth:** Bearer token (API key in header `Authorization: Bearer <token>`)
 - **Credential test:** `GET /me` endpoint
-- **Resources:** Article, Case Study, Inquiry, Me, Review, User
+- **Resources:** Article, Case Study, Inquiry, Lead, Me, Resource (lead magnet), Review, Review Collector, User
 - **Trigger:** Webhooks registered via API (`POST /webhooks`, `DELETE /webhooks/{id}`)
 
 ---

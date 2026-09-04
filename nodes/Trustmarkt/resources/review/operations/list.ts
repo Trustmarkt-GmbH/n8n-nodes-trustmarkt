@@ -9,7 +9,7 @@
  * Parameters:
  * - page: Page number (optional, default: 1)
  * - per_page: Results per page (optional, 1-50, default: 15)
- * - expand: Expand related resources (user, company, comments, etc.)
+ * - expand: Expand related resources (user, company, comments, collectedBy, etc.)
  */
 
 import type { INodeProperties, INodePropertyOptions } from 'n8n-workflow';
@@ -74,6 +74,12 @@ export const listReviewFields: INodeProperties[] = [
                 description: 'Include related resources in the response',
                 // Options sorted alphabetically
                 options: [
+                    {
+                        name: 'Collected By',
+                        value: 'collectedBy',
+                        description:
+                            'Expand the team member who collected the review through their personal review link into the full user representation (only for company owners whose plan includes personal review links)',
+                    },
                     {
                         name: 'Comments',
                         value: 'comments',
