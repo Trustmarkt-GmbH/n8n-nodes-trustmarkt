@@ -120,7 +120,9 @@ When preparing for verification or making changes, ensure ALL of these are met:
 - [ ] No file system access (`fs` module)
 - [ ] All data flows through node parameters
 - [ ] `NodeConnectionTypes.Main` is used instead of string `'main'` for inputs/outputs
-- [ ] `usableAsTool: true` is set on all nodes (required by linter)
+- [ ] `usableAsTool: true` is set on action nodes only — never on trigger nodes (n8n review rejects it there)
+- [ ] Icons provide `light` and `dark` variants (`trustmarkt.svg` / `trustmarkt-dark.svg`)
+- [ ] Codex category is `Marketing & Content` (the only recognised marketing category)
 
 ### Documentation Requirements
 - [ ] README.md exists with usage instructions, authentication details, and examples

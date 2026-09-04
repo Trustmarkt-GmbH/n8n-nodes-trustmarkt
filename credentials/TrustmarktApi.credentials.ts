@@ -26,7 +26,7 @@ export class TrustmarktApi implements ICredentialType {
 	displayName = 'Trustmarkt API';
 
 	// Icon for the credentials
-	icon: Icon = 'file:trustmarkt.svg';
+	icon: Icon = { light: 'file:trustmarkt.svg', dark: 'file:trustmarkt-dark.svg' };
 
 	// Link to documentation
 	documentationUrl = 'https://www.trustmarkt.de/r/api';

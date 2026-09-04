@@ -1,6 +1,6 @@
 {
     "name": "n8n-nodes-trustmarkt",
-    "version": "0.2.0",
+    "version": "0.2.1",
     "description": "n8n community node for integrating with the Trustmarkt API to manage reviews, review collectors, leads, resources (lead magnets), users, articles, case studies, inquiries, and webhooks",
     "license": "MIT",
     "homepage": "https://github.com/Trustmarkt-GmbH/n8n-nodes-trustmarkt",

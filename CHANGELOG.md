@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.2.1] - 2026-09-04
+
+### Fixed
+- **[HIGH]** Removed `usableAsTool` from the Trustmarkt Trigger node — trigger nodes cannot be used as AI tools and the flag polluted the tool picker (n8n review feedback)
+- **[HIGH]** The trigger's webhook `delete()` lifecycle method now logs an error when the Trustmarkt API call fails instead of swallowing it silently, so a webhook that stays active in Trustmarkt can be spotted and cleaned up
+- **[LOW]** Codex category changed from the unrecognised `Marketing & Growth` to `Marketing & Content` in both node codex files
+- **[LOW]** Icons now provide `light` and `dark` variants (`trustmarkt.svg` / `trustmarkt-dark.svg`) for the node, the trigger and the credentials
+
 ## [0.2.0] - 2026-09-04
 
 ### Added

@@ -106,7 +106,7 @@ export class Trustmarkt implements INodeType {
         // ══════════════════════════════════════════════════════════════
         displayName: 'Trustmarkt',
         name: 'trustmarkt',
-        icon: 'file:trustmarkt.svg',
+        icon: { light: 'file:trustmarkt.svg', dark: 'file:trustmarkt-dark.svg' },
         group: ['transform'],
         version: 1,
         subtitle: '={{$parameter["operation"] + ": " + $parameter["resource"]}}',

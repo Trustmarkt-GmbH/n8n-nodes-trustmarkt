@@ -32,17 +32,20 @@ import {
 
 import { getApiBaseUrl } from './shared/transport';
 
+// Trigger nodes cannot be invoked as AI tools, so `usableAsTool` must not be set on this
+// node (n8n review requirement). The community-nodes linter still asks for the property,
+// hence the targeted disable.
+// eslint-disable-next-line @n8n/community-nodes/node-usable-as-tool
 export class TrustmarktTrigger implements INodeType {
     description: INodeTypeDescription = {
         // === BASIC INFORMATION ===
         displayName: 'Trustmarkt Trigger',
         name: 'trustmarktTrigger',
-        icon: 'file:trustmarkt.svg',
+        icon: { light: 'file:trustmarkt.svg', dark: 'file:trustmarkt-dark.svg' },
         group: ['trigger'],
         version: 1,
         subtitle: '={{$parameter["events"].join(", ")}}',
         description: 'Starts the workflow when Trustmarkt events occur (Webhooks)',
-        usableAsTool: true,
 
         defaults: {
             name: 'Trustmarkt Trigger',
@@ -204,8 +207,10 @@ export class TrustmarktTrigger implements INodeType {
                     );
 
                     return true;
-                } catch {
-                    // Return true even on error (webhook might not exist anymore)
+                } catch (error) {
+                    // Do not block deactivation, but make the failure visible:
+                    // the webhook may still be active in Trustmarkt and needs manual cleanup.
+                    this.logger.error(`Failed to delete Trustmarkt webhook ${webhookId}`, { error });
                     return true;
                 } finally {
                     // Always clear stored data regardless of API outcome
