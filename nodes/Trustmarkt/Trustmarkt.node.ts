@@ -9,8 +9,8 @@
  *   Trustmarkt.node.ts (this file)
  *         │
  *         ├── resources/           ← Resource-specific operations
- *         │     ├── article/         ← Articles (list, get)
- *         │     ├── caseStudy/       ← Case studies (list, get)
+ *         │     ├── article/         ← Articles (create, get, list, start AI generation, update)
+ *         │     ├── caseStudy/       ← Case studies (create, get, list, start AI generation, update)
  *         │     ├── inquiry/         ← Inquiries (list, get)
  *         │     ├── lead/            ← Leads of resources / lead magnets (list, get)
  *         │     ├── me/              ← Authenticated user (get)
@@ -20,7 +20,9 @@
  *         │     └── user/            ← Users (list, get)
  *         │
  *         └── shared/              ← Shared utilities
- *               └── transport.ts     ← API request helpers
+ *               ├── aiGeneration.ts  ← Fields of "Start AI Generation"
+ *               ├── listSearch.ts    ← "From List" choices (industries, article categories)
+ *               └── transport.ts     ← API request and error helpers
  * ─────────────────────────────────────────────────────────────────
  *
  * ADDING A NEW RESOURCE:
@@ -35,6 +37,8 @@ import {
     type INodeType,
     type INodeTypeDescription,
 } from 'n8n-workflow';
+
+import { searchArticleCategories, searchIndustries } from './shared/listSearch';
 
 // Import resource descriptions
 import { articleOperations, articleFields } from './resources/article';
@@ -110,7 +114,7 @@ export class Trustmarkt implements INodeType {
         group: ['transform'],
         version: 1,
         subtitle: '={{$parameter["operation"] + ": " + $parameter["resource"]}}',
-        description: 'Interact with the Trustmarkt API to manage reviews, leads, resources, users, case studies, and more',
+        description: 'Interact with the Trustmarkt API to manage reviews, leads, resources, users, articles, case studies, and more',
 
         defaults: {
             name: 'Trustmarkt',
@@ -191,5 +195,15 @@ export class Trustmarkt implements INodeType {
             ...userOperations,
             ...userFields,
         ],
+    };
+
+    // ══════════════════════════════════════════════════════════════
+    // METHODS ("From List" choices of resource locators)
+    // ══════════════════════════════════════════════════════════════
+    methods = {
+        listSearch: {
+            searchArticleCategories,
+            searchIndustries,
+        },
     };
 }

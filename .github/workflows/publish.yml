@@ -1,33 +1,81 @@
-name: Publish to npm
+# Publishes this n8n community node package to npm when a version tag is pushed.
+#
+# Since May 1 2026, n8n requires community nodes to be published from GitHub
+# Actions with an npm provenance statement. This workflow follows the publish
+# workflow of n8n-nodes-starter (tag push, id-token: write, OIDC trusted
+# publishing with an NPM_TOKEN fallback). It publishes with `npm publish
+# --provenance` directly, because the installed @n8n/node-cli (< 0.23.0) has no
+# CI mode for `npm run release`.
+#
+# ─── ONE-TIME SETUP ────────────────────────────────────────────────────────────
+#
+# Option A — npm trusted publishing (recommended, no long-lived secret):
+#   npmjs.com → package n8n-nodes-trustmarkt → Settings → Trusted Publisher →
+#   GitHub Actions: owner "Trustmarkt-GmbH", repository "n8n-nodes-trustmarkt",
+#   workflow "publish.yml", environment empty. Leave NPM_TOKEN unset.
+#
+# Option B — npm token (fallback):
+#   Create a granular access token with read and write access to this package
+#   and store it as the repository secret NPM_TOKEN.
+#
+# ─── RELEASE ───────────────────────────────────────────────────────────────────
+#
+#   1. Move the "Unreleased" entry in CHANGELOG.md to the new version and commit.
+#   2. npm run release:patch | release:minor | release:major
+#      (lint, build, `npm version` → commit + tag vX.Y.Z, push with tags)
+#   3. This workflow builds, lints and publishes the tagged version.
+
+name: Publish
 
 on:
-  release:
-    types: [published]
+  push:
+    tags:
+      - 'v*.*.*'
 
 jobs:
   publish:
+    name: Publish to npm
     runs-on: ubuntu-latest
+
     permissions:
-      contents: read
+      # Required to mint the OIDC token for trusted publishing and provenance
       id-token: write
+      contents: read
+
     steps:
       - uses: actions/checkout@v4
 
-      - uses: actions/setup-node@v4
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
         with:
-          node-version: '20'
-          registry-url: 'https://registry.npmjs.org'
+          # npm 11.5.1 or later is needed for trusted publishing; current LTS ships it
+          node-version: 'lts/*'
+          cache: 'npm'
+
+      - name: Check that the tag matches package.json
+        run: |
+          PACKAGE_VERSION="v$(node -p "require('./package.json').version")"
+          if [ "$PACKAGE_VERSION" != "$GITHUB_REF_NAME" ]; then
+            echo "Tag $GITHUB_REF_NAME does not match package.json version $PACKAGE_VERSION"
+            exit 1
+          fi
 
       - name: Install dependencies
         run: npm ci
 
-      - name: Build
-        run: npm run build
-
       - name: Lint
         run: npm run lint
 
+      - name: Build
+        run: npm run build
+
       - name: Publish with provenance
-        run: npm publish --provenance --access public --ignore-scripts
+        # Option A (OIDC): NPM_TOKEN unset, npm uses the trusted publisher.
+        # Option B (token): NPM_TOKEN set, written to .npmrc before publishing.
+        run: |
+          if [ -n "$NPM_TOKEN" ]; then
+            npm config set //registry.npmjs.org/:_authToken "$NPM_TOKEN"
+          fi
+          npm publish --provenance --access public
         env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}

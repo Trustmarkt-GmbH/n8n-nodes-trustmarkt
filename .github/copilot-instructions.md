@@ -24,61 +24,44 @@ Since **May 1st 2026**, n8n **requires** all community nodes to be published via
 
 ### Step-by-Step Release Process
 
-#### 1. Prepare the code
+The release is a pushed version tag (`vX.Y.Z`); `.github/workflows/publish.yml` publishes it. There is no GitHub Release step anymore.
+
+#### 1. Prepare the code and the changelog
 
 ```bash
-# Make sure everything is clean
 npm run build
 npm run lint
-npx @n8n/scan-community-package n8n-nodes-trustmarkt
 ```
 
-All three commands must pass with zero errors.
+Both must pass with zero errors. Move the `[Unreleased]` entry in CHANGELOG.md to the new version and date, then commit everything. The working tree must be clean for the next step.
 
-#### 2. Bump the version
+#### 2. Tag and push
 
 ```bash
 # Choose one:
-npm version patch   # 0.1.2 → 0.1.3 (bug fixes)
-npm version minor   # 0.1.2 → 0.2.0 (new features)
-npm version major   # 0.1.2 → 1.0.0 (breaking changes)
+npm run release:patch   # 0.2.1 → 0.2.2 (bug fixes)
+npm run release:minor   # 0.2.1 → 0.3.0 (new features)
+npm run release:major   # 0.2.1 → 1.0.0 (breaking changes)
 ```
 
-This updates `package.json` and creates a git tag.
+Each runs lint and build, then `npm version` (bumps package.json, commits `chore: release vX.Y.Z`, creates the tag `vX.Y.Z`) and `git push --follow-tags`.
 
-#### 3. Update CHANGELOG.md
+Do not use `npm run release` (`n8n-node release`): with the installed @n8n/node-cli it regenerates CHANGELOG.md from commits and creates tags without the `v` prefix, which do not trigger the workflow.
 
-Add a new entry at the top of CHANGELOG.md with the new version number, date, and list of changes. Follow the existing format.
+#### 3. The workflow publishes
 
-#### 4. Commit and push
-
-```bash
-git add -A
-git commit -m "chore: release vX.Y.Z"
-git push origin main --tags
-```
-
-#### 5. Create a GitHub Release
-
-1. Go to https://github.com/Trustmarkt-GmbH/n8n-nodes-trustmarkt/releases
-2. Click **"Draft a new release"**
-3. Select the tag you just pushed (e.g., `v0.1.3`)
-4. Set the title to the version (e.g., `v0.1.3`)
-5. Add release notes (copy from CHANGELOG.md)
-6. Click **"Publish release"**
-
-This triggers the `.github/workflows/publish.yml` workflow which:
-- Checks out the code
+The tag push triggers `.github/workflows/publish.yml`, which:
+- Checks that the tag matches the version in package.json
 - Installs dependencies (`npm ci`)
-- Runs `npm run build`
-- Runs `npm run lint`
-- Publishes to npm with `--provenance --access public`
+- Runs `npm run lint` and `npm run build`
+- Publishes with `npm publish --provenance --access public` (npm trusted publishing, or `NPM_TOKEN` as a fallback)
 
-#### 6. Verify the publish
+#### 4. Verify the publish
 
 - Check the GitHub Actions tab for a green checkmark
 - Check https://www.npmjs.com/package/n8n-nodes-trustmarkt for the new version
 - The npm page should show a **"Provenance"** badge
+- Run `npx @n8n/scan-community-package n8n-nodes-trustmarkt` against the published version
 
 ---
 
@@ -86,10 +69,11 @@ This triggers the `.github/workflows/publish.yml` workflow which:
 
 ### `.github/workflows/publish.yml` — Publish to npm
 
-- **Trigger:** When a GitHub Release is published
+- **Trigger:** A pushed tag matching `v*.*.*`
 - **Purpose:** Builds, lints, and publishes to npm with provenance
-- **Required secret:** `NPM_TOKEN` (npm access token with publish permission)
-- **Required permissions:** `id-token: write` (for provenance signing)
+- **Authentication:** npm trusted publishing (OIDC, recommended by n8n) or the `NPM_TOKEN` secret as a fallback
+- **Required permissions:** `id-token: write` (OIDC token for trusted publishing and provenance), `contents: read`
+- **The file name must stay `publish.yml`**: the npm trusted publisher is bound to it
 - **DO NOT DELETE this file** — it is required for n8n community node verification
 
 ### `.github/workflows/ci.yml` — Continuous Integration
@@ -131,7 +115,7 @@ When preparing for verification or making changes, ensure ALL of these are met:
 
 ### Publishing Requirements
 - [ ] Published via GitHub Actions with `--provenance` flag
-- [ ] `NPM_TOKEN` secret is configured in GitHub repository settings
+- [ ] npm trusted publisher (GitHub Actions, workflow `publish.yml`) is set up, or the `NPM_TOKEN` secret as a fallback
 - [ ] GitHub repo is **public**
 
 ### Verification Submission
@@ -177,6 +161,7 @@ n8n-nodes-trustmarkt/
 | `npm run lint` | Run n8n linter |
 | `npm run lint:fix` | Auto-fix linter issues |
 | `npm run dev` | Start local n8n with this node loaded |
+| `npm run release:patch` / `release:minor` / `release:major` | Bump, tag `vX.Y.Z` and push; the publish workflow does the rest |
 | `npx @n8n/scan-community-package n8n-nodes-trustmarkt` | Run security scanner |
 
 ---
@@ -187,6 +172,7 @@ n8n-nodes-trustmarkt/
 - **Auth:** Bearer token (API key in header `Authorization: Bearer <token>`)
 - **Credential test:** `GET /me` endpoint
 - **Resources:** Article, Case Study, Inquiry, Lead, Me, Resource (lead magnet), Review, Review Collector, User
+- **Dropdown lists:** `GET /industries` (case study customer industry), `GET /article-categories` (article category), loaded by `shared/listSearch.ts`
 - **Trigger:** Webhooks registered via API (`POST /webhooks`, `DELETE /webhooks/{id}`)
 
 ---
@@ -197,18 +183,16 @@ These steps require human action in external systems:
 
 1. **npm Account:** You need an npm account at https://www.npmjs.com. The account/org name should match the package author.
 
-2. **npm Access Token:** Generate at https://www.npmjs.com/settings/YOUR_USERNAME/tokens
-   - Type: "Automation" (for CI/CD)
-   - Must have **publish** permission
+2. **npm trusted publisher (recommended):** On npmjs.com open the package `n8n-nodes-trustmarkt` → Settings → Trusted Publisher → GitHub Actions:
+   - Organization or user: `Trustmarkt-GmbH`
+   - Repository: `n8n-nodes-trustmarkt`
+   - Workflow filename: `publish.yml`
+   - Environment: leave empty
 
-3. **GitHub Secret:** Add the npm token as a repository secret:
-   - Go to: Repository → Settings → Secrets and variables → Actions
-   - Click "New repository secret"
-   - Name: `NPM_TOKEN`
-   - Value: your npm automation token
+3. **npm token (only if not using a trusted publisher):** Create a granular access token on npmjs.com with read and write access to the package and add it as the repository secret `NPM_TOKEN` (Repository → Settings → Secrets and variables → Actions). Remove an old `NPM_TOKEN` secret once the trusted publisher works.
 
 4. **Public Repository:** The GitHub repo MUST be public for verification.
 
 5. **Creator Portal Submission:** Submit at https://creators.n8n.io/nodes after publishing.
 
-6. **npm `publish` scripts:** The `publish:patch/minor/major` scripts in package.json publish directly from local — these are for convenience during early development but should **NOT** be used once you need provenance. Always use the GitHub Release workflow instead.
+6. **Never `npm publish` locally:** packages published from a local machine have no provenance and are not accepted by n8n. Always push a version tag (`npm run release:*`).

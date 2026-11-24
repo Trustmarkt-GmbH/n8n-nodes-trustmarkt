@@ -22,9 +22,9 @@
         "lint": "n8n-node lint",
         "lint:fix": "n8n-node lint --fix",
         "release": "n8n-node release",
-        "publish:patch": "npm version patch --no-git-tag-version && npm run build && npm run lint && npm publish --access public --ignore-scripts",
-        "publish:minor": "npm version minor --no-git-tag-version && npm run build && npm run lint && npm publish --access public --ignore-scripts",
-        "publish:major": "npm version major --no-git-tag-version && npm run build && npm run lint && npm publish --access public --ignore-scripts"
+        "release:patch": "npm run lint && npm run build && npm version patch -m \"chore: release v%s\" && git push --follow-tags",
+        "release:minor": "npm run lint && npm run build && npm version minor -m \"chore: release v%s\" && git push --follow-tags",
+        "release:major": "npm run lint && npm run build && npm version major -m \"chore: release v%s\" && git push --follow-tags"
     },
     "files": [
         "dist"

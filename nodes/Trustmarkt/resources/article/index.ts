@@ -7,21 +7,30 @@
  * STRUCTURE:
  * ─────────────────────────────────────────────────────────────────
  *   resources/article/
- *         ├── index.ts          ← This file (exports everything)
- *         └── operations/       ← Individual operation implementations
- *               ├── get.ts      ← Get single article operation
- *               └── list.ts     ← Get Many articles operation
+ *         ├── index.ts                   ← This file (exports everything)
+ *         └── operations/                ← Individual operation implementations
+ *               ├── create.ts            ← Create article draft operation
+ *               ├── get.ts               ← Get single article operation
+ *               ├── list.ts              ← Get Many articles operation
+ *               ├── startAiGeneration.ts ← Start AI Generation operation
+ *               └── update.ts            ← Update article operation
  * ─────────────────────────────────────────────────────────────────
  *
  * ADDING A NEW OPERATION:
- * 1. Create a new file in operations/ (e.g., create.ts)
+ * 1. Create a new file in operations/ (e.g., delete.ts)
  * 2. Export the operation definition and fields
  * 3. Add to the options array and fields below
  */
 
 import type { INodeProperties } from 'n8n-workflow';
+import { createArticleOperation, createArticleFields } from './operations/create';
 import { getArticleOperation, getArticleFields } from './operations/get';
 import { listArticleOperation, listArticleFields } from './operations/list';
+import {
+    startAiGenerationArticleOperation,
+    startAiGenerationArticleFields,
+} from './operations/startAiGeneration';
+import { updateArticleOperation, updateArticleFields } from './operations/update';
 
 /**
  * Condition to show fields only when Article resource is selected
@@ -43,12 +52,13 @@ export const articleOperations: INodeProperties[] = [
         displayOptions: {
             show: showForArticle,
         },
+        // Operations are sorted alphabetically as per n8n guidelines
         options: [
+            createArticleOperation,
             getArticleOperation,
             listArticleOperation,
-            // Future operations - add here when implemented:
-            // createArticleOperation,
-            // updateArticleOperation,
+            startAiGenerationArticleOperation,
+            updateArticleOperation,
         ],
         default: 'getMany',
     },
@@ -59,13 +69,18 @@ export const articleOperations: INodeProperties[] = [
  * Combines all operation-specific fields for the Article resource
  */
 export const articleFields: INodeProperties[] = [
+    // Create operation fields
+    ...createArticleFields,
+
     // Get operation fields
     ...getArticleFields,
 
     // Get Many operation fields
     ...listArticleFields,
 
-    // Future operation fields - add here when implemented:
-    // ...createArticleFields,
-    // ...updateArticleFields,
+    // Start AI Generation operation fields
+    ...startAiGenerationArticleFields,
+
+    // Update operation fields
+    ...updateArticleFields,
 ];
