@@ -2,7 +2,7 @@
 
 All notable changes to this project will be documented in this file.
 
-## [Unreleased]
+## [0.3.0] - 2026-11-24
 
 ### Added
 - **Case Study → Create** (`POST /case-studies`): creates a case study draft from a `Title`, with `Customer Name` under *Additional Fields*. A company can have at most 50 drafts.
